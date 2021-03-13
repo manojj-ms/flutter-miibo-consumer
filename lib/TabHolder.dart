@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter_app/class/event.dart';
 import 'package:flutter_app/auth/Register.dart';
 import 'package:flutter_app/auth/Login.dart';
 import 'package:flutter_app/auth/ForgotPassword.dart';
+import 'package:flutter_app/environment.dart';
 import 'package:flutter_app/tabPages/Announcement.dart';
 import 'package:flutter_app/tabPages/Audio.dart';
 import 'package:flutter_app/tabPages/Events.dart';
@@ -15,6 +17,8 @@ import 'package:flutter_app/utils/SizeConfig.dart';
 import 'package:flutter_app/utils/CustomBottomNavigation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'class/merchant.dart';
 
 
 class TabHolder extends StatefulWidget {
@@ -29,18 +33,65 @@ class _TabHolderPageState extends State<TabHolder> {
 
   NavigationBarTheme navigationBarTheme;
 
-  get prefs => null;
+  // Env
+  Environment env = new Environment();
+  // All Data
+  SharedPreferences prefs;
+  List<Event> events = [];
+  List<String> slider = [];
+  List<FeatureMerchant> shops = [];
 
-  get http => null;
+  @override
+  void initState() {
+    super.initState();
+    initprefs();
+    _pageController = PageController();
+    getHomeData();
+  }
 
-  get env => null;
+  void initprefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
+  getHomeData() async {
+    List<String> images = [];
+    List<FeatureMerchant> mercshop = [];
+    var datum = await http.get(env.sliderURL());
+    if (datum.statusCode == 200) {
+      Iterable l = json.decode(datum.body);
+      images = List<String>.from(l.map((model) => model['image'].toString()));
+    }
+    var mshops = await http.get(env.featureMerchantURL());
+    if (mshops.statusCode == 200) {
+      Iterable l = json.decode(mshops.body);
+      mercshop = List<FeatureMerchant>.from(
+          l.map((model) => FeatureMerchant.fromJson(model)));
+    }
+    setState(() {
+      slider = images;
+      shops = mercshop;
+    });
+  }
 
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     MySize().init(context);
     themeData = Theme.of(context);
     navigationBarTheme = AppTheme.getNavigationThemeFromMode(1);
+    const IconData announcement_outlined = IconData(0xf072, fontFamily: 'MaterialIcons');
+    const IconData volume_up_rounded = IconData(0xf531, fontFamily: 'MaterialIcons');
+    const IconData person_pin_rounded = IconData(0xf385, fontFamily: 'MaterialIcons');
+    const IconData house_outlined = IconData(0xe236, fontFamily: 'MaterialIcons');
+    const IconData house_rounded = IconData(0xf265, fontFamily: 'MaterialIcons');
+
+
+
+
     return Scaffold(
       body: SizedBox.expand(
         child: PageView(
@@ -53,19 +104,22 @@ class _TabHolderPageState extends State<TabHolder> {
               case 3:
                 var datum = await http.get(env.eventURL());
                 Iterable l = json.decode(datum.body);
-                List<Events> evelist =
-                    List<Events>.from(l.map((model) => Events().fromJson(model)));
+                List<Event> evelist =
+                List<Event>.from(l.map((model) => Event.fromJson(model)));
+                setState(() {
+                  events = evelist;
+                });
                 break;
               case 4:
                 break;
             }
           },
           children: <Widget>[
-            Home(),
-            Announcement(),
             Gallery(),
+            Audio(),
+            Home(),
             Events(),
-            Audio()
+            Announcement()
           ],
         ),
       ),
@@ -85,22 +139,28 @@ class _TabHolderPageState extends State<TabHolder> {
         },
         items: <CustomBottomNavigationBarItem>[
           CustomBottomNavigationBarItem(
-              title: "Home",
-              icon: Icon(MdiIcons.storeOutline, size: MySize.size22),
-              activeIcon: Icon(MdiIcons.store, size: MySize.size22),
-              activeColor: navigationBarTheme.selectedItemColor,
-              inactiveColor: navigationBarTheme.unselectedItemColor),
-          CustomBottomNavigationBarItem(
               title: "Gallery",
-              icon: Icon(MdiIcons.replay, size: MySize.size22),
-              activeIcon: Icon(MdiIcons.replay, size: MySize.size22),
+              icon: Icon(
+                person_pin_rounded,
+                size: MySize.size22,
+              ),
+              activeIcon: Icon(
+                person_pin_rounded,
+                size: MySize.size22,
+              ),
               activeColor: navigationBarTheme.selectedItemColor,
               inactiveColor: navigationBarTheme.unselectedItemColor),
           CustomBottomNavigationBarItem(
               title: "Audio",
-              icon: Icon(MdiIcons.fileDocumentMultiple, size: MySize.size22),
-              activeIcon: Icon(MdiIcons.fileDocumentMultipleOutline,
+              icon: Icon(volume_up_rounded, size: MySize.size22),
+              activeIcon: Icon(volume_up_rounded,
                   size: MySize.size22),
+              activeColor: navigationBarTheme.selectedItemColor,
+              inactiveColor: navigationBarTheme.unselectedItemColor),
+          CustomBottomNavigationBarItem(
+              title: "Home",
+              icon: Icon(house_rounded, size: MySize.size22),
+              activeIcon: Icon(house_outlined, size: MySize.size22),
               activeColor: navigationBarTheme.selectedItemColor,
               inactiveColor: navigationBarTheme.unselectedItemColor),
           CustomBottomNavigationBarItem(
@@ -111,23 +171,12 @@ class _TabHolderPageState extends State<TabHolder> {
               inactiveColor: navigationBarTheme.unselectedItemColor),
           CustomBottomNavigationBarItem(
               title: "Announcement",
-              icon: Icon(
-                MdiIcons.accountOutline,
-                size: MySize.size22,
-              ),
-              activeIcon: Icon(
-                MdiIcons.account,
-                size: MySize.size22,
-              ),
+              icon: Icon(announcement_outlined, size: MySize.size22),
+              activeIcon: Icon(announcement_outlined, size: MySize.size22),
               activeColor: navigationBarTheme.selectedItemColor,
               inactiveColor: navigationBarTheme.unselectedItemColor),
         ],
       ),
     );
   }
-
-  void getHomeData() {}
-}
-
-class SharedPreferences {
 }

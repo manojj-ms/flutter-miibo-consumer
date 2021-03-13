@@ -176,6 +176,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
+                Container(
+                  margin: EdgeInsets.only(top: MySize.size16),
+                  child: TextFormField(
+                    obscureText: _passwordVisible,
+                    style: AppTheme.getTextStyle(themeData.textTheme.bodyText1,
+                        letterSpacing: 0.1,
+                        color: themeData.colorScheme.onBackground,
+                        fontWeight: 500),
+                    decoration: InputDecoration(
+                      hintStyle: AppTheme.getTextStyle(
+                          themeData.textTheme.subtitle2,
+                          letterSpacing: 0.1,
+                          color: themeData.colorScheme.onBackground,
+                          fontWeight: 500),
+                      hintText: "Confirm Password",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.0),
+                          ),
+                          borderSide: BorderSide(
+                              color: themeData.colorScheme.surface,
+                              width: 1.2)),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.0),
+                          ),
+                          borderSide: BorderSide(
+                              color: themeData.colorScheme.surface,
+                              width: 1.2)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.0),
+                          ),
+                          borderSide: BorderSide(
+                              color: themeData.colorScheme.surface,
+                              width: 1.2)),
+                      prefixIcon: Icon(
+                        MdiIcons.lockOutline,
+                        size: 22,
+                      ),
+                      suffixIcon: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _passwordVisible = !_passwordVisible;
+                          });
+                        },
+                        child: Icon(
+                          _passwordVisible
+                              ? MdiIcons.eyeOutline
+                              : MdiIcons.eyeOffOutline,
+                          size: MySize.size22,
+                        ),
+                      ),
+                      isDense: true,
+                      contentPadding: EdgeInsets.all(0),
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+                ),
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
@@ -191,7 +250,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ],
                           ),
-                          margin: EdgeInsets.only(left: MySize.size32),
+                          margin: EdgeInsets.only(top: MySize.size24),
                           child: FlatButton(
                             shape: RoundedRectangleBorder(
                                 borderRadius:

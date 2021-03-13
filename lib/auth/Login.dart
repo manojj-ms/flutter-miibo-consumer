@@ -203,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ],
                               ),
-                              margin: EdgeInsets.only(left: MySize.size32),
+                              margin: EdgeInsets.only(top: MySize.size32),
                               child: FlatButton(
                                 shape: RoundedRectangleBorder(
                                     borderRadius:

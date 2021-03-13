@@ -12,9 +12,18 @@ class _GalleryState extends State<Gallery> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('Gallery!'),
+    const PrimaryColor = const Color(0xff7b1fa2);
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar( centerTitle: true,
+        backgroundColor: PrimaryColor,
+        title: Text('Gallery', style: TextStyle(color: Color(0xffedf3ec))),
+      ),
+      body : Container(
+        padding: Spacing.all(6),
+        child: Center(
+          child: Text('Gallery!'),
+        ),
       ),
     );
   }

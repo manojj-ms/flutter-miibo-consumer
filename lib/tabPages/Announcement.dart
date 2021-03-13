@@ -12,10 +12,18 @@ class _AnnouncementState extends State<Announcement> {
 
   @override
   Widget build(BuildContext context) {
+    const PrimaryColor = const Color(0xff7b1fa2);
     // TODO: implement build
-    return Container(
-      child: Center(
-        child: Text('Announcement!'),
+    return Scaffold(
+      appBar: AppBar( centerTitle: true,
+        backgroundColor: PrimaryColor,
+        title: Text('Announcement', style: TextStyle(color: Color(0xffedf3ec))),
+      ),
+      body : Container(
+        padding: Spacing.all(6),
+        child: Center(
+          child: Text('Announcement!'),
+        ),
       ),
     );
   }
